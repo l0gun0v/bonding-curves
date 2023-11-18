@@ -7,15 +7,12 @@ import "./CurveBondedToken.sol";
 contract AdvancedCBT is CurveBondedToken {
     function () public { revert(); }
 
-    ERC20 public reserveToken;
-
-    function mint(uint256 _amount) public {
-        require(reserveToken.transferFrom(msg.sender, address(this), _amount));
-        _curvedMint(_amount);
+    function mint() public payable {
+        _curvedMint(tx.value);
     }
 
-    function burn(uint256 _amount) public {
+    function burn(uint256 _amount) public payable {
         uint256 reimbursement = _curvedBurn(_amount);
-        reserveToken.transfer(msg.sender, reimbursement);
+        payable(tx.origin).transfer(reimbursement);
     }
 }
